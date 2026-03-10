@@ -1,2 +1,5 @@
 server/data/*
 !server/data/.gitkeep
+!server/data/uploads/
+server/data/uploads/*
+!server/data/uploads/.gitkeep
