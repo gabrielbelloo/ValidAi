@@ -29,12 +29,10 @@ export default function Container() {
     setResults([]);
 
     try {
-      console.log("🟢 BACKEND: ", data.results);
       const data = await uploadImage(validFiles, setProgress, filters);
 
       setResults((prev) => [...prev, ...data]);
     } catch (error) {
-      console.error("handleUpload error: ", error);
     } finally {
       setLoading(false);
     }
@@ -46,12 +44,10 @@ export default function Container() {
     try {
       setResults((prev) => [...prev, ...rejectedFiles]);
     } catch (error) {
-      console.error("handleReject error: ", error);
     }
   };
 
   const handleFilters = (event) => {
-    console.log("🔥 XAAAMBRAAA");
     const { name, value } = event.target;
 
     setFilters((prev) => ({
@@ -59,10 +55,8 @@ export default function Container() {
       [name]: value === "" ?  null : value,
     }))
 
-    console.log("🟠 FILTERS: ", filters);
   };
 
-  console.log("🔵 STATE FINAL: ", results);
 
   return (
     <div className="bg-gray-800/40 p-5 rounded-lg outline outline-gray-700/50 backdrop-blur-sm text-white gap-8 flex flex-col">

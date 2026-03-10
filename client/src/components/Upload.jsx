@@ -51,8 +51,6 @@ export default function Upload({ handleUpload, handleRejected, loading }) {
               },
             ],
       }));
-      console.log("🔴 REJECTED: ", rejected);
-      console.log("🟢 ACCEPTED:", accepted);
 
       const normalizedFiles = [...accepted, ...rejected];
       setFiles((prev) => [...prev, ...normalizedFiles]);
@@ -60,13 +58,11 @@ export default function Upload({ handleUpload, handleRejected, loading }) {
       const validFiles = normalizedFiles
         .filter((f) => f.checks[0].status === "ok")
         .map((f) => f.file);
-      console.log("✅ VALID FILES: ", validFiles);
 
       const invalidFiles = normalizedFiles.filter(
         (f) => f.checks[0].status === "error",
       );
 
-      console.log("❌ INVALID FILES: ", invalidFiles);
 
       if (validFiles.length > 0) {
         handleUpload(validFiles);

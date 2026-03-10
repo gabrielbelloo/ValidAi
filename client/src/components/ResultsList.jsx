@@ -1,8 +1,6 @@
 import React from "react";
 
 export default function ResultsList({ results, summary }) {
-  console.log("🔵 RESULTS NO RESULTSLIST:", results);
-  console.log("📊 SUMMARY:", summary);
 
   return (
     <div className="overflow-x-auto">
@@ -69,7 +67,6 @@ export default function ResultsList({ results, summary }) {
         </thead>
         <tbody className="font-normal text-base text-gray-300">
           {results.map((item, index) => {
-            console.log(`📦 RENDERIZANDO ITEM ${index}:`, item);
 
             return (
               <tr
@@ -113,7 +110,6 @@ export default function ResultsList({ results, summary }) {
                 <td className="flex h-full items-center gap-2 px-6 py-3">
                   <img
                     src={`http://localhost:8000${item.file_url}`}
-                    src={`https://validai.plconfeccoes.com.br/api${item.file_url}`}
                     className="w-10 rounded-xs mr-3"
                   />
 
@@ -122,7 +118,6 @@ export default function ResultsList({ results, summary }) {
 
                 <td className="px-6 py-3">
                   {item.checks?.map((check, idx) => {
-                    console.log(`  📋 CHECK ${idx}:`, check);
                     return (
                       <ul key={idx}>
                         <li>
@@ -136,7 +131,6 @@ export default function ResultsList({ results, summary }) {
 
                 <td className="px-6 py-3 text-[0.91em]">
                   {item.checks?.map((check, idx) => {
-                    console.log(`  ⚠️ ERRORS do CHECK ${idx}:`, check.errors);
                     return (
                       <React.Fragment key={idx}>
                         {check.errors?.length > 0 ? (
