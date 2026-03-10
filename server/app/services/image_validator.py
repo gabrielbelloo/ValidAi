@@ -13,14 +13,15 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
 
     checks = []
     
-    # Validate file format
     if expected_extensions:   
         file_extension = Path(uploaded_file.filename).suffix.lower()
         allowed_formats = [f.lower().lstrip('.') for f in expected_extensions.split(',')]
         if not any(file_extension.lstrip('.') == fmt or file_extension == f'.{fmt}' for fmt in allowed_formats):
             return {
                 "approved": False,
+                "stage": "validation",
                 "summary": "Formato inválido",
+                "file_url": file_url,
                 "checks": [{
                 "name": "Formato",
                 "status": "error",
