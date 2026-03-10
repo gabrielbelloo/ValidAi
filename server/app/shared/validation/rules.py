@@ -48,7 +48,7 @@ def validate_nomenclature(filename: str) -> bool:
         raise ValueError("Filename inválido")
     
     name = Path(filename).stem
-    rule = "^\d{4} \d{2} \d{5}#\d$"
+    rule = r"^\d{4} \d{1,2} \d{5}#\d$"
     
     if re.match(rule, name):
         return True
