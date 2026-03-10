@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from fastapi import APIRouter, UploadFile, File, Form
 from app.api.schemas import ValidationResponse
 from app.services.image_validator import validate_image_service
