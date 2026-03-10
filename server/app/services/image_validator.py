@@ -1,10 +1,10 @@
 import os
-import shutil
 import re
 from pathlib import Path
 from fastapi import UploadFile
 from PIL import Image, ImageOps
 from app.shared.validation.rules import sanitize_filename
+from app.services.file_storage_service import save_file
 from app.shared.validation.rules import validate_nomenclature
 
 UPLOAD_DIR = Path("data/uploads")
@@ -20,14 +20,7 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
     expected_dimensions = (expected_width, expected_height)
     
 
-    # Save uploaded file
-    safe_filename = sanitize_filename(uploaded_file.filename)
-    file_path = UPLOAD_DIR / safe_filename
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(uploaded_file.file, buffer)
-
-    file_url = f"/uploads/{safe_filename}"
-    
+    file_path, file_url = save_file(uploaded_file, upload_dir=UPLOAD_DIR)
 
     checks = []
     
