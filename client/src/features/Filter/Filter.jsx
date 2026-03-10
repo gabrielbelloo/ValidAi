@@ -1,20 +1,19 @@
-import InputSelectBase from "./InputSelectBase";
+import InputSelectBase from "../../components/InputSelectBase/InputSelectBase.jsx";
 
 export default function Filter({ handleFilters }) {
 
   return (
-    <div className="flex justify-between">
+    <div className="@container w-full grid grid-cols-2 gap-2 gap-x-5 sm:flex sm:flex-row sm:gap-10 sm:justify-between">
       <InputSelectBase
         as="input"
         type="text"
         name="max_size"
-        label="Tamanho máximo (MB)"
+        label="Tam. máx. (MB)"
         required={true}
         placeholder="Ex: 5"
         onChange={handleFilters}
       ></InputSelectBase>
 
-      <div className="flex gap-5">
         <InputSelectBase
           as="input"
           type="text"
@@ -34,12 +33,11 @@ export default function Filter({ handleFilters }) {
           placeholder="Ex: 1080"
           onChange={handleFilters}
         ></InputSelectBase>
-      </div>
 
       <InputSelectBase
         as="select"
         name="expected_extensions"
-        label="Formato esperado"
+        label="Formato"
         required={false}
         onChange={handleFilters}
       >

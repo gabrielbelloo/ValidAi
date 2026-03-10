@@ -1,8 +1,8 @@
-import Container from "../components/Container.jsx";
+import Container from "../features/Container/Container.jsx";
 
 export default function Home() {
   return (
-    <div className="isolate h-full min-h-screen w-full min-w-screen p-10 xl:px-40 xl:py-20 bg-[#121212] font-inter">
+    <div className="@container isolate min-h-screen bg-[#121212] font-inter">
       <div
         aria-hidden="true"
         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
