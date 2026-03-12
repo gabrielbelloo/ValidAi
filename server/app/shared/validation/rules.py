@@ -1,9 +1,8 @@
 import re
 import os
-import uuid
 from pathlib import Path
 from PIL import Image, ImageOps
-from app.shared.image.metadata import get_size, get_dimensions
+from app.shared.utils.metadata import get_size, get_dimensions
 
 def validate_size(file_path: Path, max_size_bytes: float, max_size_mb: float | None) -> dict:
     if max_size_mb:
@@ -33,13 +32,13 @@ def validate_dimensions(file_path: Path, expected_dimensions: tuple) -> dict:
             "dimensions": (width, height),
         }
 
-def sanitize_filename(filename: str) -> str:
+def sanitize_filename(filename: str, file_id: str) -> str:
     if not filename:
         raise ValueError("Filename inválido")
 
     ext = Path(filename).suffix
 
-    name = uuid.uuid4()
+    name = file_id
     return f"{name}{ext}"
 
 

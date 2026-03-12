@@ -12,6 +12,7 @@ class ValidationCheck(BaseModel):
     errors: Optional[List[ValidationError]] = None
 
 class ValidationResult(BaseModel):
+    id: str
     filename: str
     approved: bool
     stage: str
@@ -21,3 +22,10 @@ class ValidationResult(BaseModel):
 
 class ValidationResponse(BaseModel):
     results: List[ValidationResult]
+    
+class ConvertRequest(BaseModel):
+    file_ids: List[str]
+    target_size: Optional[float] = None
+    target_width: Optional[int] = None
+    target_height: Optional[int] = None
+    target_extensions: Optional[str] = None

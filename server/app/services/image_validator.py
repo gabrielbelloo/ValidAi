@@ -1,5 +1,6 @@
 from pathlib import Path
 from fastapi import UploadFile
+import uuid
 from app.services.file_storage_service import save_file
 from app.shared.validation.rules import validate_nomenclature
 from app.shared.validation.rules import validate_size
@@ -9,7 +10,8 @@ UPLOAD_DIR = Path("data/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None, expected_width: int | None, expected_height: int | None, expected_extensions: str | None):
-    file_path, file_url = save_file(uploaded_file, upload_dir=UPLOAD_DIR)
+    file_id = str(uuid.uuid4())
+    file_path, file_url = save_file(uploaded_file, file_id, upload_dir=UPLOAD_DIR)
 
     checks = []
     
@@ -18,6 +20,7 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
         allowed_formats = [f.lower().lstrip('.') for f in expected_extensions.split(',')]
         if not any(file_extension.lstrip('.') == fmt or file_extension == f'.{fmt}' for fmt in allowed_formats):
             return {
+                "id": id,
                 "approved": False,
                 "stage": "validation",
                 "summary": "Formato inválido",
@@ -36,7 +39,6 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
     if max_size_mb is not None:
         max_size_bytes = max_size_mb * 1024 * 1024 
     if max_size_bytes is not None: 
-        print(f"Validando tamanho do arquivo: {file_path} (tamanho máximo: {max_size_mb} mb)")
         size_validation = validate_size(file_path, max_size_bytes, max_size_mb)
         file_size = size_validation["size"]
         if not size_validation["valid"]:
@@ -100,6 +102,7 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
     approved = not any(c["status"] == "error" for c in checks)
     
     return {
+        "id": id,
         "stage": "validation",
         "approved": approved,
         "summary": "Imagem validada com sucesso" if approved else "Falha na validação da imagem",
