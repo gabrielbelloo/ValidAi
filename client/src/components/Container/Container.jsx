@@ -8,7 +8,7 @@ import Filter from "../../features/Filter/Filter.jsx";
 import exportCsvData from "../../services/reportService.js";
 import Summary from "../../features/Summary/Summary.jsx";
 import IconButton from "../../components/IconButton/IconButton.jsx";
-import { DownloadIcon, PrinterIcon } from "../../assets/icons/index.js";
+import { DownloadIcon, PrinterIcon, TransformIcon } from "../../assets/icons/index.js";
 
 export default function Container() {
   const [results, setResults] = useState([]);
@@ -90,13 +90,14 @@ export default function Container() {
           <div className="grid grid-cols-1 grid-rows-2 sm:flex place-items-center sm:justify-between">
             <Summary summary={summary} />
 
-            <div className="grid grid-cols-2 row-start-2 [&>div]:bg-gray-600/10 [&>div]:rounded-lg [&>div]:p-1 [&>div]:sm:bg-transparent [&>div]:sm:rounded-none [&>div]:sm:p-0 sm:flex gap-5">
+            <div className="grid grid-cols-3 row-start-3 [&>div]:bg-gray-600/10 [&>div]:rounded-lg [&>div]:p-1 [&>div]:sm:bg-transparent [&>div]:sm:rounded-none [&>div]:sm:p-0 sm:flex gap-5">
+
               <IconButton
                 icon={<DownloadIcon />}
                 tooltip={"Exportar CSV"}
                 onClick={() => exportCsvData(results)}
               >
-                <span className="flex sm:hidden">ﾠExportar</span>
+                <span className="flex sm:hidden">ﾠExportar CSV</span>
               </IconButton>
 
               <IconButton

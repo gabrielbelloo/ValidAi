@@ -7,7 +7,7 @@ export default function Filter({ handleFilters }) {
       <InputSelectBase
         as="input"
         type="text"
-        name="max_size"
+        name="max_size_mb"
         label="Tam. máx. (MB)"
         required={true}
         placeholder="Ex: 5"

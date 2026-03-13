@@ -25,7 +25,7 @@ class ValidationResponse(BaseModel):
     
 class ConvertRequest(BaseModel):
     file_ids: List[str]
-    target_size: Optional[float] = None
-    target_width: Optional[int] = None
-    target_height: Optional[int] = None
-    target_extensions: Optional[str] = None
+    max_size_mb: Optional[float] = None
+    expected_width: Optional[int] = None
+    expected_height: Optional[int] = None
+    expected_extensions: Optional[str] = None

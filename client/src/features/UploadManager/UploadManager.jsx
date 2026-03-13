@@ -60,6 +60,7 @@ export default function UploadManager({ handleUpload, handleRejected, loading })
     if (invalidFiles.length > 0) {
       handleRejected(invalidFiles);
     }
+
   };
 
   return (

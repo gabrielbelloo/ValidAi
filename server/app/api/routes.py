@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api", tags=["validation"])
 @router.post("/validate", response_model=ValidationResponse)
 async def validate_image(
     files: List[UploadFile] = File(...), 
-    max_size: float | None = Form(None), 
+    max_size_mb: float | None = Form(None), 
     expected_width: int | None = Form(None), 
     expected_height: int | None = Form(None), 
     expected_extensions: str | None = Form(None)
@@ -22,7 +22,7 @@ async def validate_image(
         
         result = validate_image_service(
             file, 
-            max_size, 
+            max_size_mb, 
             expected_width, 
             expected_height, 
             expected_extensions
@@ -43,10 +43,10 @@ async def convert_image(req: ConvertRequest):
     for file_id in req.file_ids:
         converted_file = convert_image_service(
             file_id,
-            req.target_size,
-            req.target_width,
-            req.target_height,
-            req.target_extensions
+            req.max_size_mb,
+            req.expected_width,
+            req.expected_height,
+            req.expected_extensions
         )
         converted_files.append(converted_file)
 

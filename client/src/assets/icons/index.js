@@ -4,3 +4,4 @@ export { default as DownloadIcon } from "./DownloadIcon.jsx";
 export { default as PrinterIcon } from "./PrinterIcon.jsx";
 export { default as RefreshIcon } from "./RefreshIcon.jsx";
 export { default as UploadIcon } from "./UploadIcon.jsx"
+export { default as WandIcon } from "./WandIcon.jsx"

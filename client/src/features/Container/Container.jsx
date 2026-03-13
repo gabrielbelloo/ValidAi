@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { uploadImage } from "../../services/api.js";
+import uploadImage from "../../services/validateService.js";
+import convertImage from "../../services/convertService.js"
 import ResultsList from "../ResultsList/ResultsList.jsx";
 import UploadManager from "../UploadManager/UploadManager.jsx";
 import LoadingBar from "../../components/LoadingBar/LoadingBar.jsx";
@@ -8,14 +9,18 @@ import Filter from "../Filter/Filter.jsx";
 import exportCsvData from "../../services/reportService.js";
 import Summary from "../Summary/Summary.jsx";
 import IconButton from "../../components/IconButton/IconButton.jsx";
-import { DownloadIcon, PrinterIcon } from "../../assets/icons/index.js";
+import {
+  DownloadIcon,
+  PrinterIcon,
+  WandIcon,
+} from "../../assets/icons/index.js";
 
 export default function Container() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [filters, setFilters] = useState({
-    max_size: null,
+    max_size_mb: null,
     expected_width: null,
     expected_height: null,
     expected_extensions: null,
@@ -63,6 +68,22 @@ export default function Container() {
     }));
   };
 
+  const handleConvert = async (results) => {
+
+    const invalidFiles = results.filter((f) => !f.approved).map((f) => f.id);
+
+    try{
+      const blob = await convertImage(invalidFiles, filters);
+      const tempUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = tempUrl;
+      a.download = "validai_converted.zip";
+      a.click();
+    } catch(error){
+      console.error("handleConvert error: ", error);
+    }
+  }
+
   const componentRef = useRef(null);
 
   const handlePrint = useReactToPrint({
@@ -90,11 +111,21 @@ export default function Container() {
           <div className="grid grid-cols-1 grid-rows-2 sm:flex place-items-center sm:justify-between">
             <Summary summary={summary} />
 
-            <div className="grid grid-cols-2 row-start-2 [&>div]:bg-gray-600/10 [&>div]:rounded-lg [&>div]:p-1 [&>div]:sm:bg-transparent [&>div]:sm:rounded-none [&>div]:sm:p-0 sm:flex gap-5">
+            <div className="grid grid-cols-3 row-start-2 [&>div]:bg-gray-600/10 [&>div]:rounded-lg [&>div]:p-1 [&>div]:sm:bg-transparent [&>div]:sm:rounded-none [&>div]:sm:p-0 sm:flex gap-5">
+              <IconButton
+                icon={<WandIcon />}
+                tooltip={"Converter arquivos inválidos"}
+                onClick={() => handleConvert(results)}
+                className={"flex-col"}
+              >
+                <span className="wand flex sm:hidden">Converter</span>
+              </IconButton>
+
               <IconButton
                 icon={<DownloadIcon />}
                 tooltip={"Exportar CSV"}
                 onClick={() => exportCsvData(results)}
+                className={"flex-col"}
               >
                 <span className="flex sm:hidden">ﾠExportar</span>
               </IconButton>
@@ -103,6 +134,7 @@ export default function Container() {
                 icon={<PrinterIcon />}
                 tooltip={"Imprimir Resumo"}
                 onClick={handlePrint}
+                className={"flex-col"}
               >
                 <span className="flex sm:hidden">ﾠImprimir</span>
               </IconButton>

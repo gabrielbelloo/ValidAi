@@ -20,7 +20,7 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
         allowed_formats = [f.lower().lstrip('.') for f in expected_extensions.split(',')]
         if not any(file_extension.lstrip('.') == fmt or file_extension == f'.{fmt}' for fmt in allowed_formats):
             return {
-                "id": id,
+                "id": file_id,
                 "approved": False,
                 "stage": "validation",
                 "summary": "Formato inválido",
@@ -102,7 +102,7 @@ def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None,
     approved = not any(c["status"] == "error" for c in checks)
     
     return {
-        "id": id,
+        "id": file_id,
         "stage": "validation",
         "approved": approved,
         "summary": "Imagem validada com sucesso" if approved else "Falha na validação da imagem",

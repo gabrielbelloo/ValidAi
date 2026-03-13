@@ -23,7 +23,7 @@ def convert_image_service(file_id: str, max_size_mb: float | None, expected_widt
     
     if format == "JPEG":
         img = img.convert("RGB")
-        
+
     new_img_path = UPLOAD_DIR / f"{file_id}_converted.{format.lower()}"
     
     if format == "PNG":
