@@ -38,7 +38,7 @@ export default function ResultsList({ results }) {
 
                 <td className="col-start-1 sm:flex h-full min-w-25 sm:w-full items-center gap-2 p-4 sm:px-6 sm:py-3">
                   <img
-                    src={`http://localhost:8000/api${item.file_url}`}
+                    src={`${import.meta.env.VITE_API_URL}${item.file_url}`}
                     className="w-20 sm:w-15 md:w-16 lg:w-13 rounded-md sm:rounded-lg md:rounded-sm sm:mr-3"
                   />
                   <p className="text-base text-white font-normal hidden sm:block">{item.filename}</p>
