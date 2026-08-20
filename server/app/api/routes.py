@@ -14,7 +14,7 @@ async def validate_image(
     max_size_mb: float | None = Form(None), 
     expected_width: int | None = Form(None), 
     expected_height: int | None = Form(None), 
-    expected_extensions: str | None = Form(None)
+    expected_format: str | None = Form(None)
 ):
     results = []
 
@@ -25,7 +25,7 @@ async def validate_image(
             max_size_mb, 
             expected_width, 
             expected_height, 
-            expected_extensions
+            expected_format
         )
 
         results.append({
@@ -46,7 +46,7 @@ async def convert_image(req: ConvertRequest):
             req.max_size_mb,
             req.expected_width,
             req.expected_height,
-            req.expected_extensions
+            req.expected_format
         )
         converted_files.append(converted_file)
 

@@ -18,7 +18,7 @@ export default function Container() {
     max_size: null,
     expected_width: null,
     expected_height: null,
-    expected_extensions: null,
+    expected_format: null,
   });
 
   const summary = useMemo(() => {

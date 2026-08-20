@@ -1,111 +1,140 @@
-from pathlib import Path
-from fastapi import UploadFile
 import uuid
+from pathlib import Path
+
+from fastapi import UploadFile
+
 from app.services.file_storage_service import save_file
-from app.shared.validation.rules import validate_nomenclature
-from app.shared.validation.rules import validate_size
-from app.shared.validation.rules import validate_dimensions
+from app.shared.validation.rules import (
+    validate_nomenclature,
+    validate_size,
+    validate_dimensions,
+)
 
 UPLOAD_DIR = Path("data/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-def validate_image_service(uploaded_file: UploadFile, max_size_mb: float | None, expected_width: int | None, expected_height: int | None, expected_extensions: str | None):
+
+def validate_image_service(
+    uploaded_file: UploadFile, 
+    max_size_mb: float | None, 
+    expected_width: int | None, 
+    expected_height: int | None, 
+    expected_format: str | None
+):
+    
     file_id = str(uuid.uuid4())
-    file_path, file_url = save_file(uploaded_file, file_id, upload_dir=UPLOAD_DIR)
+    file_path, file_url = save_file(
+        uploaded_file, 
+        file_id, 
+        upload_dir=UPLOAD_DIR
+    )
 
     checks = []
     
-    if expected_extensions:   
-        file_extension = Path(uploaded_file.filename).suffix.lower()
-        allowed_formats = [f.lower().lstrip('.') for f in expected_extensions.split(',')]
-        if not any(file_extension.lstrip('.') == fmt or file_extension == f'.{fmt}' for fmt in allowed_formats):
-            return {
-                "id": file_id,
-                "approved": False,
-                "stage": "validation",
-                "summary": "Formato inválido",
-                "file_url": file_url,
-                "checks": [{
-                "name": "Formato",
-                "status": "error",
-                "errors": [{
-                    "code": "invalid_format",
-                    "message": f"O formato do arquivo deve ser {expected_extensions}."
-                }]
-                }]
-            }
+    if expected_format:
+        file_format = Path(uploaded_file.filename or "").suffix.lower()
+
+        if file_format.lstrip(".") != expected_format.lower().lstrip("."):
+            checks.append(
+                {
+                    "name": "Formato",
+                    "status": "error",
+                    "value": file_format,
+                    "errors": [
+                        {
+                            "code": "invalid_format",
+                            "message": (
+                                f"O formato do arquivo deve ser "
+                                f"{expected_format}."
+                            ),
+                        }
+                    ],
+                }
+            )
         
-    max_size_bytes = None
     if max_size_mb is not None:
         max_size_bytes = max_size_mb * 1024 * 1024 
-    if max_size_bytes is not None: 
-        size_validation = validate_size(file_path, max_size_bytes, max_size_mb)
+        size_validation = validate_size(
+            file_path,
+            max_size_bytes, 
+            max_size_mb
+        )
+        
         file_size = size_validation["size"]
-        if not size_validation["valid"]:
-            checks.append({
+        formatted_size = f"{file_size / 1024 / 1024:.2f} MB"
+        
+        checks.append(
+            {
                 "name": "Tamanho",
-                "status": "error",
-                "value": str(f"{file_size / 1024 / 1024:.2f}") + " mb",
-                "errors": [{
-                    "code": "file_too_large",
-                    "message": f"O tamanho do arquivo excede o limite de {max_size_mb} mb."
-                }]
-            })
-        else:
-            checks.append({
-                "name": "Tamanho",
-                "status": "ok",
-                "value": str(f"{file_size / 1024 / 1024:.2f}") + " mb",
-                "errors": None
-            })
+                "status": "ok" if size_validation["valid"] else "error",
+                "value": formatted_size,
+                "errors": (
+                    None if size_validation["valid"] else [
+                        {
+                            "code": "file_too_large",
+                            "message": f"O tamanho do arquivo excede o limite de {max_size_mb} MB."
+                        }
+                    ]
+                ),
+            }
+        )
         
     if expected_width is not None and expected_height is not None:
         expected_dimensions = (expected_width, expected_height)
-        dimension_validation = validate_dimensions(file_path, expected_dimensions)
+        
+        dimension_validation = validate_dimensions(
+            file_path, 
+            expected_dimensions
+            )
+        
         width, height = dimension_validation["dimensions"]
-        if not dimension_validation["valid"]:
-            checks.append({
+        dimensions = f"{width}x{height}"
+        
+        checks.append(
+            {
                 "name": "Dimensões",
-                "status": "error",
-                "value": f"{width}x{height}",
-                "errors": [{
-                    "code": "invalid_dimensions",
-                    "message": f"As dimensões da imagem devem ser {expected_dimensions[0]}x{expected_dimensions[1]} pixels."
-                }]
-            })
-        else: 
-            checks.append({
-                "name": "Dimensões",
-                "status": "ok",
-                "value": f"{width}x{height}",
-                "errors": None
-            })
+                "status": "ok" if dimension_validation["valid"] else "error",
+                "value": dimensions,
+                "errors": ( 
+                    None if dimension_validation["valid"] else [
+                        {
+                            "code": "invalid_dimensions",
+                            "message": f"As dimensões da imagem devem ser {expected_width}x{expected_height} pixels."
+                        }
+                    ]
+                ),
+            }
+        )
+        
+    filename = uploaded_file.filename or ""
+    nomenclature_valid = validate_nomenclature(filename)
 
-    if not validate_nomenclature(uploaded_file.filename):
-        checks.append({
+    checks.append(
+        {
             "name": "Nomenclatura",
-            "status": "error",
-            "value": uploaded_file.filename,
-            "errors": [{
-                "code": "invalid_nomenclature",
-                "message": "A nomenclatura não corresponde ao esperado (ex: 9999 99 99999#1.jpg)."
-            }]
-        })
-    else:
-        checks.append({
-            "name": "Nomenclatura",
-            "status": "ok",
-            "value": uploaded_file.filename,
-            "errors": None        
-    })
+            "status": "ok" if nomenclature_valid else "error",
+            "value": filename,
+            "errors": (
+                None if nomenclature_valid else [
+                    {
+                        "code": "invalid_nomenclature",
+                        "message": "A nomenclatura não corresponde ao esperado (ex: 9999 99 99999#1.jpg)."
+                    }
+                ]
+            ),
+        }
+    )
     
-    approved = not any(c["status"] == "error" for c in checks)
+    approved = not any(check["status"] == "error" for check in checks)
     
     return {
         "id": file_id,
         "stage": "validation",
         "approved": approved,
-        "summary": "Imagem validada com sucesso" if approved else "Falha na validação da imagem",
+        "summary": (
+            "Imagem validada com sucesso" if approved 
+            else "Falha na validação da imagem"
+        ),
         "file_url": file_url,
         "checks": checks
     }

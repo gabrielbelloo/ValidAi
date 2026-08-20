@@ -25,8 +25,8 @@ export default async function uploadImage(files, setProgress, filters) {
         if (filters.expected_height != null) {
             formData.append("expected_height", filters.expected_height);
         }
-        if (filters.expected_extensions != null) {
-            formData.append("expected_extensions", filters.expected_extensions);
+        if (filters.expected_format != null) {
+            formData.append("expected_format", filters.expected_format);
         }
 
         return api.post("/validate", formData, {

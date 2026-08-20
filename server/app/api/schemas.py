@@ -28,4 +28,4 @@ class ConvertRequest(BaseModel):
     max_size_mb: Optional[float] = None
     expected_width: Optional[int] = None
     expected_height: Optional[int] = None
-    expected_extensions: Optional[str] = None
+    expected_format: Optional[str] = None

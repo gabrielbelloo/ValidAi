@@ -36,7 +36,7 @@ export default function Filter({ handleFilters }) {
 
       <InputSelectBase
         as="select"
-        name="expected_extensions"
+        name="expected_format"
         label="Formato"
         required={false}
         onChange={handleFilters}
